@@ -1,7 +1,11 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer
+
 plugins {
-    id 'org.springframework.boot' version '3.0.0-M5'
+    id 'org.springframework.boot' version '2.7.1'
+    id 'org.springframework.experimental.aot' version '0.12.1' //<-- will be removed after spring boot 3.0
     id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'org.graalvm.buildtools.native' version '0.9.14'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
@@ -11,16 +15,17 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
     maven { url 'https://repo.spring.io/milestone' }
 }
 
 ext {
-    set('springCloudVersion', "2022.0.0-M5")
+    set('springCloudVersion', "2021.0.4")
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.cloud:spring-cloud-function-context'
+    implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -32,4 +37,34 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+assemble.dependsOn = [shadowJar]
+
+shadowJar {
+    classifier = 'aws'
+    dependencies {
+        exclude(
+                dependency("org.springframework.cloud:spring-cloud-function-web:3.2.7")
+        )
+    }
+    // Required for Spring
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    transform(PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories']
+        mergeStrategy = "append"
+    }
+}
+
+
+graalvmNative {
+    binaries {
+        main {
+            imageName = 'application'
+        }
+    }
 }

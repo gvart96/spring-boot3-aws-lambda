@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  job:
+    name: "Create artifact"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: '22.2.0'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Gradle Build"
+        run: ./gradlew nativeCompile
+
+      - run: |
+          mkdir lambda
+          mv ./src/native/bootstrap ./lambda
+          mv ./build/native/nativeCompile/application ./lambda
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: lambda_${{github.sha}}
+          path: ./lambda
