@@ -1,5 +1,7 @@
 package md.gvart.springboot3nativeawslambda;
 
+import md.gvart.springboot3nativeawslambda.domain.InputMessage;
+import md.gvart.springboot3nativeawslambda.domain.OutputMessage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,7 @@ public class SpringBoot3NativeAwsLambdaApplication {
 
 
     @Bean
-    public Function<String, String> uppercaseFunction() {
-        return String::toUpperCase;
+    public Function<InputMessage, OutputMessage> uppercaseFunction() {
+        return (it) -> new OutputMessage(it.message().toUpperCase());
     }
 }
