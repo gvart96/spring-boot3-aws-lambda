@@ -20,4 +20,9 @@ public class SpringBoot3NativeAwsLambdaApplication {
     public Function<InputMessage, OutputMessage> uppercaseFunction() {
         return (it) -> new OutputMessage(it.message().toUpperCase());
     }
+
+    @Bean
+    public Function<InputMessage, OutputMessage> lowercaseFunction() {
+        return (it) -> new OutputMessage(it.message().toLowerCase());
+    }
 }

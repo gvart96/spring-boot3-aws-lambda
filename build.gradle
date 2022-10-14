@@ -24,6 +24,9 @@ ext {
 }
 
 dependencies {
+    implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
+    implementation 'com.amazonaws:aws-lambda-java-serialization:1.0.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
     implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
