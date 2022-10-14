@@ -1,0 +1,11 @@
+[
+  {
+    "name": "md.gvart.springboot3nativeawslambda.domain.ApiResponse",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  }
+]
